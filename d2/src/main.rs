@@ -6,8 +6,7 @@ use std::{
 fn get_reader() -> BufReader<File> {
     let filename = "src/input2.txt";
     let file = File::open(filename).unwrap();
-    let reader = BufReader::new(file);
-    return reader;
+    BufReader::new(file)
 }
 
 fn calc_pos_simple() -> (i32, i32) {
