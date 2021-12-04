@@ -8,20 +8,35 @@ class D4
   end
 
   def p1
-    winner_board, num = draw
+    winner_board, num = draw_p1
     unmarked_sum = winner_board.sum_unmarked
     unmarked_sum * num
   end
 
-  def p2; end
+  def p2
+    last_winner_board, num = draw_p2
+    unmarked_sum = last_winner_board.sum_unmarked
+    unmarked_sum * num
+  end
 
   private
 
-  def draw
+  def draw_p1
     @drawn_numbers.each do |num|
       @boards.each do |board|
         return board, num if board.mark_drawn(num) == :bingo
       end
+    end
+  end
+
+  def draw_p2
+    winning_boards_idxes = []
+    @drawn_numbers.each do |num|
+      @boards.each_with_index do |board, idx|
+        winning_boards_idxes << idx if board.mark_drawn(num) == :bingo && !winning_boards_idxes.include?(idx)
+      end
+
+      return @boards[winning_boards_idxes[-1]], num if winning_boards_idxes.length == @boards.length
     end
   end
 

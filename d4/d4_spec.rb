@@ -30,4 +30,8 @@ describe D4 do
   it 'works for part 1' do
     expect(D4.new(input).p1).to eq(4512)
   end
+
+  it 'works for part 2' do
+    expect(D4.new(input).p2).to eq(1924)
+  end
 end
