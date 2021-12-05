@@ -1,31 +1,38 @@
 # frozen_string_literal: true
 
-def input
-  File.readlines('input1.txt').map(&:to_i)
-end
-
-def count_increases
-  count = 0
-  prev = nil
-  input.each do |num|
-    count += 1 if prev && num > prev
-    prev = num
+# https://adventofcode.com/2021/day/1
+class D1
+  def initialize(input)
+    @numbers = input.split("\n").map(&:to_i)
   end
-  count
-end
 
-def count_sliding_windows_increases
-  count = 0
-  prev = nil
-  window = []
-  input.each do |num|
-    window.shift if window.length == 3
-    window << num
-    count += 1 if prev && window.sum > prev
-    prev = window.sum if window.length == 3
+  def p1
+    count = 0
+    prev = nil
+    @numbers.each do |num|
+      count += 1 if prev && num > prev
+      prev = num
+    end
+    count
   end
-  count
+
+  def p2
+    count = 0
+    prev = nil
+    window = []
+    @numbers.each do |num|
+      window.shift if window.length == 3
+      window << num
+      count += 1 if prev && window.sum > prev
+      prev = window.sum if window.length == 3
+    end
+    count
+  end
 end
 
-puts count_increases
-puts count_sliding_windows_increases
+if $PROGRAM_NAME == __FILE__
+  file = File.read('input1.txt')
+
+  puts(D1.new(file).p1)
+  puts(D1.new(file).p2)
+end
