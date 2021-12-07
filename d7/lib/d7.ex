@@ -1,32 +1,20 @@
 defmodule D7 do
   def p1(input) do
-    nums = parse_input(input)
-    median = median(nums)
+    positions = parse_input(input)
+    median = median(positions)
 
-    nums
+    positions
     |> Enum.map(&abs(&1 - median))
     |> Enum.sum()
   end
 
   def p2(input) do
-    nums = parse_input(input)
-    avg = avg(nums)
+    positions = parse_input(input)
+    avg_position = avg(positions)
 
-    cost1 =
-      nums
-      |> Enum.map(&triangular_number(abs(&1 - trunc(avg))))
-      |> Enum.sum()
-
-    cost2 =
-      nums
-      |> Enum.map(&triangular_number(abs(&1 - round(avg))))
-      |> Enum.sum()
-
-    if cost1 < cost2 do
-      cost1
-    else
-      cost2
-    end
+    [&trunc/1, &round/1]
+    |> Enum.map(fn fun -> calc_p2_fuel(positions, avg_position, fun) end)
+    |> Enum.min()
   end
 
   defp parse_input(input) do
@@ -52,9 +40,13 @@ defmodule D7 do
     Enum.sum(numbers) / length(numbers)
   end
 
-  @doc """
-  https://en.wikipedia.org/wiki/Triangular_number
-  """
+  defp calc_p2_fuel(positions, target_pos, fun) do
+    positions
+    |> Enum.map(&triangular_number(abs(&1 - fun.(target_pos))))
+    |> Enum.sum()
+  end
+
+  # https://en.wikipedia.org/wiki/Triangular_number
   defp triangular_number(num) do
     div(Integer.pow(num, 2) + num, 2)
   end
