@@ -36,18 +36,14 @@ defmodule D7 do
     end
   end
 
-  defp avg(numbers) do
-    Enum.sum(numbers) / length(numbers)
-  end
+  defp avg(numbers), do: Enum.sum(numbers) / length(numbers)
+
+  # https://en.wikipedia.org/wiki/Triangular_number
+  defp triangular_number(num), do: div(Integer.pow(num, 2) + num, 2)
 
   defp calc_p2_fuel(positions, target_pos, fun) do
     positions
     |> Enum.map(&triangular_number(abs(&1 - fun.(target_pos))))
     |> Enum.sum()
-  end
-
-  # https://en.wikipedia.org/wiki/Triangular_number
-  defp triangular_number(num) do
-    div(Integer.pow(num, 2) + num, 2)
   end
 end
