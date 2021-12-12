@@ -15,12 +15,16 @@ class D11
   end
 
   def p2
-    :ok
+    loop do
+      @octopus_map.process_step
+      break if @octopus_map.synchronized?
+    end
+    @octopus_map.total_steps
   end
 end
 
 class OctopusMap
-  attr_reader :total_flashes
+  attr_reader :total_flashes, :total_steps
 
   def initialize(lines)
     @map = lines.map { |l| l.chars.map(&:to_i) }
@@ -72,10 +76,9 @@ class OctopusMap
     end
   end
 
-  def print
-    puts "Total flashes: #{@total_flashes}"
-    puts "Total steps: #{@total_steps}"
-    pp(@map)
+  def synchronized?
+    @map.each { |l| l.each { |e| return false if e != 0 } }
+    true
   end
 
   private

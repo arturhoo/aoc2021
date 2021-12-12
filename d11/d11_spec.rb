@@ -23,6 +23,6 @@ describe D11 do
   end
 
   it 'works for part 2' do
-    expect(D11.new(input).p2).to eq(:fix_me)
+    expect(D11.new(input).p2).to eq(195)
   end
 end
