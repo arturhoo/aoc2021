@@ -14,7 +14,13 @@ class D9
   end
 
   def p2
-    :ok
+    low_points = @heightmap.low_points
+    basins = Array.new(low_points.length) { [] }
+    low_points.each_with_index do |coord, idx|
+      @heightmap.find_basin(coord[0], coord[1], basins[idx])
+    end
+    basins.sort_by!(&:size).reverse!
+    basins[0..2].reduce(1) { |product, b| product * b.size }
   end
 end
 
@@ -52,6 +58,15 @@ class Heightmap
 
   def coord_risk(x, y)
     @map[y][x] + 1
+  end
+
+  def find_basin(x, y, points)
+    return if points.include?([x, y]) || @map[y][x] == 9
+
+    points << [x, y]
+    neighbour_coords(x, y).each do |n_x, n_y|
+      find_basin(n_x, n_y, points)
+    end
   end
 end
 

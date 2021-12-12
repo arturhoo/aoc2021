@@ -18,6 +18,6 @@ describe D9 do
   end
 
   it 'works for part 2' do
-    expect(D9.new(input).p2).to eq(:fix_me)
+    expect(D9.new(input).p2).to eq(1134)
   end
 end
