@@ -3,11 +3,18 @@
 require 'Set'
 require 'pp'
 
-SCOREBOARD = {
+P1_SCOREBOARD = {
   '}' => 1197,
   ']' => 57,
   ')' => 3,
   '>' => 25_137
+}.freeze
+
+P2_SCOREBOARD = {
+  ')' => 1,
+  ']' => 2,
+  '}' => 3,
+  '>' => 4
 }.freeze
 
 # https://adventofcode.com/2021/day/10
@@ -18,16 +25,29 @@ class D10
   end
 
   def p1
-    points = 0
+    score = 0
     @lines.each do |line|
       corrupt, token = line.corrupt?
-      points += SCOREBOARD[token] if corrupt
+      score += P1_SCOREBOARD[token] if corrupt
     end
-    points
+    score
   end
 
   def p2
-    :ok
+    scores = []
+    incomplete = @lines.reject { |l| l.corrupt?[0] }
+    incomplete.each do |line|
+      score = 0
+      completion_string = line.completion_string
+      completion_string.chars.each do |char, _idx|
+        score *= 5
+        score += P2_SCOREBOARD[char]
+      end
+      scores << score
+    end
+
+    scores.sort!
+    scores[scores.length / 2]
   end
 end
 
@@ -58,6 +78,18 @@ class Line
       stack.pop
     end
     [false, nil]
+  end
+
+  def completion_string
+    stack = []
+    @line.each do |token|
+      if OPENING.include?(token)
+        stack << token
+        next
+      end
+      stack.pop
+    end
+    stack.map { |t| MAP.invert[t] }.reverse.join
   end
 end
 
