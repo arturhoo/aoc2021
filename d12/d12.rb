@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'Set'
+
 # https://adventofcode.com/2021/day/12
 class D12
   def initialize(input)
@@ -13,7 +15,15 @@ class D12
   end
 
   def p2
-    :ok
+    all_paths = Set[]
+    @system.keys.select(&:downcase?).each do |cave|
+      next if %w[start end].include?(cave)
+
+      @special_cave = cave
+      paths = visit_cave('start', [], [])
+      all_paths.merge(paths)
+    end
+    all_paths.length
   end
 
   private
@@ -37,10 +47,13 @@ class D12
     end
 
     connections = @system[cave]
-    connections.each do |connected_caves|
-      next if connected_caves.downcase? && current_path.include?(connected_caves)
+    connections.each do |connected_cave|
+      if connected_cave.downcase? && current_path.include?(connected_cave)
+        next if connected_cave != @special_cave
+        next if current_path.select { |c| c == @special_cave }.length >= 2
+      end
 
-      possible_paths = visit_cave(connected_caves, current_path, possible_paths)
+      possible_paths = visit_cave(connected_cave, current_path, possible_paths)
     end
     possible_paths
   end

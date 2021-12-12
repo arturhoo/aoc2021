@@ -2,6 +2,7 @@
 
 require './d12'
 
+# rubocop:disable Metrics/BlockLength
 describe D12 do
   let(:input1) do
     <<~EXAMPLE_INPUT
@@ -60,8 +61,9 @@ describe D12 do
   end
 
   it 'works for part 2' do
-    expect(D12.new(input1).p2).to eq(:fix_me)
-    expect(D12.new(input2).p2).to eq(:fix_me)
-    expect(D12.new(input3).p2).to eq(:fix_me)
+    expect(D12.new(input1).p2).to eq(36)
+    expect(D12.new(input2).p2).to eq(103)
+    expect(D12.new(input3).p2).to eq(3509)
   end
 end
+# rubocop:enable Metrics/BlockLength
