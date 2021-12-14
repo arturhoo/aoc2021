@@ -43,13 +43,9 @@ jobs:
         with:
           ruby-version: '3.0'
           bundler-cache: true
-      - name: Install rspec
-        run: |
-          gem update --system
-          gem install rspec
       - name: Run tests
         run: |
           find ./* -name "d*.rb" -print | \
           awk -F '/' '{print $2}' | \
           uniq | \
-          xargs -n1 -IDIR bash -c 'cd DIR && rspec *_spec.rb'
+          xargs -n1 -IDIR bash -c 'cd DIR && bundle install && bundle exec rspec *_spec.rb'
