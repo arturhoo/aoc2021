@@ -12,6 +12,7 @@ jobs:
           elixir-version: '1.13.0'
           otp-version: '24.1'
       - name: Run tests
-        run: find ./* -name mix.exs -print | \
-             awk -F '/' '{print $2}' | \
-             xargs -n1 -IDIR bash -c 'cd DIR && mix test'
+        run: |
+          find ./* -name mix.exs -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && mix test'
