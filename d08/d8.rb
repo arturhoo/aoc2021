@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'Set'
+require 'set'
 require 'pp'
 
 # https://adventofcode.com/2021/day/8
