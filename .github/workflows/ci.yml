@@ -48,4 +48,4 @@ jobs:
           find ./* -name "d*.rb" -print | \
           awk -F '/' '{print $2}' | \
           uniq | \
-          xargs -n1 -IDIR bash -c 'cd DIR && bundle exec rspec *_spec.rb'
+          xargs -n1 -IDIR bash -c 'cd DIR && rspec *_spec.rb'
