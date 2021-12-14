@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'Set'
+require 'set'
 require 'pp'
 
 P1_SCOREBOARD = {

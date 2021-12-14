@@ -1,0 +1,55 @@
+name: CI
+on: [push, pull_request]
+env:
+  CARGO_TERM_COLOR: always
+jobs:
+  elixir:
+    name: Build and test elixir solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-beam@988e02bfe678367a02564f65ca2e37726dc0268f
+        with:
+          elixir-version: '1.13.0'
+          otp-version: '24.1'
+      - name: Run tests
+        run: |
+          find ./* -name mix.exs -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && mix test'
+  rust:
+    name: Build and test rust solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          find ./* -name Cargo.toml -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && cargo build --verbose'
+      - name: Run tests
+        run: |
+          find ./* -name Cargo.toml -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && cargo test --verbose'
+  ruby:
+    name: Build and test ruby solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+      - name: Install deps
+        run : |
+          gem update --system
+          gem install rspec set
+      - name: Run tests
+        run: |
+          find ./* -name "d*.rb" -print | \
+          awk -F '/' '{print $2}' | \
+          uniq | \
+          xargs -n1 -IDIR bash -c 'cd DIR && rspec *_spec.rb'
