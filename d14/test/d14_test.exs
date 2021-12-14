@@ -2,7 +2,7 @@ defmodule D14Test do
   use ExUnit.Case
   doctest D14
 
-  test "part 1" do
+  setup do
     input = """
     NNCB
 
@@ -24,31 +24,14 @@ defmodule D14Test do
     CN -> C
     """
 
+    {:ok, input: input}
+  end
+
+  test "part 1", %{input: input} = _ do
     assert D14.p1(input) == 1588
   end
 
-  test "part 2" do
-    input = """
-    NNCB
-
-    CH -> B
-    HH -> N
-    CB -> H
-    NH -> C
-    HB -> C
-    HC -> B
-    HN -> C
-    NN -> C
-    BH -> H
-    NC -> B
-    NB -> B
-    BN -> B
-    BB -> N
-    BC -> B
-    CC -> N
-    CN -> C
-    """
-
+  test "part 2", %{input: input} = _ do
     assert D14.p2(input) == 2_188_189_693_529
   end
 
