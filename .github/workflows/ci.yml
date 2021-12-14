@@ -44,7 +44,9 @@ jobs:
           ruby-version: '3.0'
           bundler-cache: true
       - name: Install rspec
-        run: gem install rspec
+        run: |
+          gem update --system
+          gem install rspec
       - name: Run tests
         run: |
           find ./* -name "d*.rb" -print | \
