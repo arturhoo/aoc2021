@@ -1,5 +1,7 @@
 name: CI
 on: [push, pull_request]
+env:
+  CARGO_TERM_COLOR: always
 jobs:
   elixir:
     name: Build and test elixir solutions
@@ -16,3 +18,18 @@ jobs:
           find ./* -name mix.exs -print | \
           awk -F '/' '{print $2}' | \
           xargs -n1 -IDIR bash -c 'cd DIR && mix test'
+  rust:
+    name: Build and test rust solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: |
+          find ./* -name Cargo.toml -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && cargo build --verbose'
+      - name: Run tests
+        run: |
+          find ./* -name Cargo.toml -print | \
+          awk -F '/' '{print $2}' | \
+          xargs -n1 -IDIR bash -c 'cd DIR && cargo test --verbose'
