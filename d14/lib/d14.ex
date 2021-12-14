@@ -11,12 +11,12 @@ defmodule D14 do
   def p2(input) do
     {template, pair_rules} = parse_input(input)
 
-    elem_freq = Enum.frequencies(template)
-    pairs = derive_pairs(template)
-    pair_freq = Enum.frequencies(pairs)
-
     %D14{elem_freq: elem_freq} =
-      %D14{elem_freq: elem_freq, pair_freq: pair_freq, pair_rules: pair_rules}
+      %D14{
+        elem_freq: Enum.frequencies(template),
+        pair_freq: Enum.frequencies(derive_pairs(template)),
+        pair_rules: pair_rules
+      }
       |> develop_polymer_smart(40)
 
     Enum.max(Map.values(elem_freq)) - Enum.min(Map.values(elem_freq))
