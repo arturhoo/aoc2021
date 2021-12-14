@@ -1,5 +1,6 @@
 defmodule D14 do
-  @spec p1(binary) :: number
+  defstruct elem_freq: %{}, pair_freq: %{}, pair_rules: %{}
+
   def p1(input) do
     {template, pair_rules} = parse_input(input)
     polymer = develop_polymer_naive(template, pair_rules, 10)
@@ -7,14 +8,17 @@ defmodule D14 do
     Enum.max(Map.values(elem_freq)) - Enum.min(Map.values(elem_freq))
   end
 
-  @spec p2(binary) :: number
   def p2(input) do
     {template, pair_rules} = parse_input(input)
 
     elem_freq = Enum.frequencies(template)
     pairs = derive_pairs(template)
     pair_freq = Enum.frequencies(pairs)
-    {elem_freq, _} = develop_polymer_smart(elem_freq, pair_freq, pair_rules, 40)
+
+    %D14{elem_freq: elem_freq} =
+      %D14{elem_freq: elem_freq, pair_freq: pair_freq, pair_rules: pair_rules}
+      |> develop_polymer_smart(40)
+
     Enum.max(Map.values(elem_freq)) - Enum.min(Map.values(elem_freq))
   end
 
@@ -44,25 +48,25 @@ defmodule D14 do
   def derive_pairs([e1, e2]), do: [e1 <> e2]
   def derive_pairs([e1 | [e2 | tail]]), do: [e1 <> e2 | derive_pairs([e2 | tail])]
 
-  def develop_polymer_smart(elem_freq, pair_freq, pair_rules, steps) do
-    Enum.reduce(0..(steps - 1), {elem_freq, pair_freq}, fn _, {elem_freq, pair_freq} ->
-      develop_polymer_smart_once(elem_freq, pair_freq, pair_rules)
+  def develop_polymer_smart(container, steps) do
+    Enum.reduce(0..(steps - 1), container, fn _, container ->
+      develop_polymer_smart_once(container)
     end)
   end
 
-  defp develop_polymer_smart_once(elem_freq, pair_freq, pair_rules) do
-    Enum.reduce(pair_freq, {elem_freq, pair_freq}, fn {pair, freq}, {elem_freq, pair_freq} ->
+  defp develop_polymer_smart_once(container) do
+    Enum.reduce(container.pair_freq, container, fn {pair, freq}, container ->
       [l, r] = String.codepoints(pair)
-      new_elem = pair_rules[pair]
-      elem_freq = increment_key_by(elem_freq, new_elem, freq)
+      new_elem = container.pair_rules[pair]
+      elem_freq = increment_key_by(container.elem_freq, new_elem, freq)
 
       pair_freq =
-        pair_freq
+        container.pair_freq
         |> increment_key_by(pair, -freq)
         |> increment_key_by(l <> new_elem, freq)
         |> increment_key_by(new_elem <> r, freq)
 
-      {elem_freq, pair_freq}
+      %{container | elem_freq: elem_freq, pair_freq: pair_freq}
     end)
   end
 

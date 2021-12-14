@@ -56,16 +56,19 @@ defmodule D14Test do
     assert D14.derive_pairs(["B", "B", "B"]) == ["BB", "BB"]
   end
 
-  BBB
-  BNBNB
-
   test 'Smart development from BBNBB to BNBBNBBNB works' do
     assert D14.develop_polymer_smart(
-             %{"B" => 4, "N" => 1},
-             %{"BB" => 2, "BN" => 1, "NB" => 1},
-             %{"BB" => "N", "NB" => "B", "BN" => "B"},
+             %D14{
+               elem_freq: %{"B" => 4, "N" => 1},
+               pair_freq: %{"BB" => 2, "BN" => 1, "NB" => 1},
+               pair_rules: %{"BB" => "N", "NB" => "B", "BN" => "B"}
+             },
              1
            ) ==
-             {%{"B" => 6, "N" => 3}, %{"BB" => 2, "BN" => 3, "NB" => 3}}
+             %D14{
+               elem_freq: %{"B" => 6, "N" => 3},
+               pair_freq: %{"BB" => 2, "BN" => 3, "NB" => 3},
+               pair_rules: %{"BB" => "N", "NB" => "B", "BN" => "B"}
+             }
   end
 end
