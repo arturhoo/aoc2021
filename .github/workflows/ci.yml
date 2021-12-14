@@ -43,6 +43,7 @@ jobs:
         with:
           ruby-version: '3.0'
           bundler-cache: true
+      - steps:
           gem update --system
           gem install rspec set
       - name: Run tests
