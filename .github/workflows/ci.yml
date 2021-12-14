@@ -44,7 +44,7 @@ jobs:
           ruby-version: '3.0'
           bundler-cache: true
       - name: Install deps
-        run :
+        run : |
           gem update --system
           gem install rspec set
       - name: Run tests
