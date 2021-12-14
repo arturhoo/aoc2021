@@ -33,3 +33,19 @@ jobs:
           find ./* -name Cargo.toml -print | \
           awk -F '/' '{print $2}' | \
           xargs -n1 -IDIR bash -c 'cd DIR && cargo test --verbose'
+  ruby:
+    name: Build and test ruby solutions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+      - name: Run tests
+        run: |
+          find ./* -name "d*.rb" -print | \
+          awk -F '/' '{print $2}' | \
+          uniq | \
+          xargs -n1 -IDIR bash -c 'cd DIR && bundle exec rspec *_spec.rb'
