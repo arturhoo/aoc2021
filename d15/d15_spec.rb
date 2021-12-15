@@ -23,6 +23,6 @@ describe D15 do
   end
 
   it 'works for part 2' do
-    expect(D15.new(input).p2).to eq(:FIX_ME)
+    expect(D15.new(input).p2).to eq(315)
   end
 end

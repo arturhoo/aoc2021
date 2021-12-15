@@ -2,23 +2,21 @@
 
 require 'set'
 
-# https://adventofcode.com/2021/day/12
+# https://adventofcode.com/2021/day/15
 class D15
   def initialize(input)
     parse_input(input)
   end
 
   def p1
-    @costs = Array.new(@height) { Array.new(@width) { Float::INFINITY } }
-    @costs[0][0] = 0
-    @visited = Set[]
-    @unvisited = (0..@height - 1).map { |h| (0..@width - 1).map { |w| [h, w] } }.flatten(1).to_set
-    dijkstra
+    a_star
     @costs[@height - 1][@width - 1]
   end
 
   def p2
-    :ok
+    expand_grid
+    a_star
+    @costs[@height - 1][@width - 1]
   end
 
   private
@@ -29,16 +27,54 @@ class D15
     @height = @grid.length
   end
 
-  def dijkstra
-    until @unvisited.empty?
-      pos = pick_least_cost_pos
-      @visited.add(pos)
-      unvisited_neigh = possible_neigh(pos).to_set & @unvisited
-      unvisited_neigh.each do |neigh|
-        tentative_cost = @costs[pos[0]][pos[1]] + @grid[neigh[0]][neigh[1]]
-        @costs[neigh[0]][neigh[1]] = tentative_cost if @costs[neigh[0]][neigh[1]] > tentative_cost
+  def expand_grid
+    @grid.each_with_index do |line, idx|
+      4.times do
+        line += line[-@width..].map { |i| increment_value(i) }
+      end
+      @grid[idx] = line
+    end
+
+    4.times do
+      @grid[-@height..].each do |line|
+        @grid << line.map { |i| increment_value(i) }
       end
     end
+    @height *= 5
+    @width *= 5
+  end
+
+  def setup_pathfinder
+    @costs = Array.new(@height) { Array.new(@width) { Float::INFINITY } }
+    @costs[0][0] = 0
+    @h_costs = Array.new(@height) { Array.new(@width) { nil } }
+    @h_costs[0][0] = 0
+    # this should be a pqueue
+    @pending = Set[[0, 0]]
+  end
+
+  def increment_value(val)
+    new_val = val + 1
+    return new_val unless new_val >= 10
+
+    (new_val + 1) % 10
+  end
+
+  # https://www.redblobgames.com/pathfinding/a-star/introduction.html
+  def a_star
+    setup_pathfinder
+    until @pending.empty?
+      pos = pick_least_h_cost_pending_pos
+      break if pos == [@height - 1, @width - 1]
+
+      possible_neigh(pos).each { |neigh| process_neigh(pos, neigh) }
+    end
+  end
+
+  def pick_least_h_cost_pending_pos
+    pos = @pending.min_by { |p| @h_costs[p[0]][p[1]] }
+    @pending.delete(pos)
+    pos
   end
 
   def possible_neigh(pos)
@@ -50,10 +86,17 @@ class D15
     possible_neigh
   end
 
-  def pick_least_cost_pos
-    pos = @unvisited.min_by { |p| @costs[p[0]][p[1]] }
-    @unvisited.delete(pos)
-    pos
+  def process_neigh(pos, neigh)
+    tentative_cost = @costs[pos[0]][pos[1]] + @grid[neigh[0]][neigh[1]]
+    return unless @costs[neigh[0]][neigh[1]] > tentative_cost
+
+    @costs[neigh[0]][neigh[1]] = tentative_cost
+    @h_costs[neigh[0]][neigh[1]] = tentative_cost + man_distance(neigh)
+    @pending.add(neigh)
+  end
+
+  def man_distance(pos)
+    @height - pos[0] + @width - pos[1]
   end
 end
 
@@ -61,5 +104,5 @@ if $PROGRAM_NAME == __FILE__
   file = File.read('input15.txt')
 
   puts(D15.new(file).p1)
-  # puts(D15.new(file).p2)
+  puts(D15.new(file).p2)
 end
