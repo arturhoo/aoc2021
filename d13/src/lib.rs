@@ -49,8 +49,8 @@ fn parse_input(input: &Vec<String>) -> (HashSet<Point>, Vec<Fold>, Point) {
 
         match &line[..3] {
             "fol" => {
-                let tokens: Vec<&str> = line.split(" ").collect();
-                let fold_tokens: Vec<&str> = tokens[2].split("=").collect();
+                let tokens: Vec<&str> = line.split(' ').collect();
+                let fold_tokens: Vec<&str> = tokens[2].split('=').collect();
                 let direction = match fold_tokens[0] {
                     "x" => Direction::Vertical,
                     "y" => Direction::Horizontal,
@@ -61,7 +61,7 @@ fn parse_input(input: &Vec<String>) -> (HashSet<Point>, Vec<Fold>, Point) {
                 folds.push(fold);
             }
             _ => {
-                let coords: Vec<&str> = line.split(",").collect();
+                let coords: Vec<&str> = line.split(',').collect();
                 let point = Point {
                     x: coords[0].parse().unwrap(),
                     y: coords[1].parse().unwrap(),
@@ -78,8 +78,7 @@ fn parse_input(input: &Vec<String>) -> (HashSet<Point>, Vec<Fold>, Point) {
 
 fn perform_fold(points: HashSet<Point>, fold: &Fold, edge: Point) -> (HashSet<Point>, Point) {
     let mut new_points: HashSet<Point> = HashSet::new();
-    let new_edge;
-    match fold.direction {
+    let new_edge: Point = match fold.direction {
         Direction::Vertical => {
             for point in points {
                 if point.x > fold.coord {
@@ -91,10 +90,10 @@ fn perform_fold(points: HashSet<Point>, fold: &Fold, edge: Point) -> (HashSet<Po
                     new_points.insert(point);
                 }
             }
-            new_edge = Point {
+            Point {
                 x: edge.x / 2 - 1,
                 y: edge.y,
-            };
+            }
         }
         Direction::Horizontal => {
             for point in points {
@@ -107,16 +106,16 @@ fn perform_fold(points: HashSet<Point>, fold: &Fold, edge: Point) -> (HashSet<Po
                     new_points.insert(point);
                 }
             }
-            new_edge = Point {
+            Point {
                 x: edge.x,
                 y: edge.y / 2 - 1,
-            };
+            }
         }
     };
     (new_points, new_edge)
 }
 
-fn print_points(points: &HashSet<Point>, edge: &Point) -> () {
+fn print_points(points: &HashSet<Point>, edge: &Point) {
     for y in 0..(edge.y + 1) {
         for x in 0..(edge.x + 1) {
             if points.contains(&Point { x, y }) {
